@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">PocketHinman</string>
+    <string name="hello_world">Tap me if you dare!</string>
+    <string name="tapme">Tap me!</string>
+</resources>
