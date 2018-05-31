@@ -55,6 +55,17 @@
             android:layout_height="1000dp"
             android:layout_weight="100">
 
+            <!--<hardingllc.pockethinman_android.CameraPreview-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:id="@+id/cameraPreview"/>-->
+            <FrameLayout
+                android:id="@+id/cameraPreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                />
+
             <hardingllc.pockethinman_android.ZoomableViewGroup
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

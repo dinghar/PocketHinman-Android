@@ -1,11 +1,19 @@
 package hardingllc.pockethinman_android;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -13,10 +21,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 
@@ -24,8 +34,12 @@ public class MainActivity extends AppCompatActivity {
 
     Boolean isPlaying = false;
 
-    private Context context;
-    private RelativeLayout layout;
+    private Context mContext;
+    private RelativeLayout mLayout;
+
+    private Camera mCamera;
+    private CameraPreview mCameraPreview;
+    private static final int PERMISSION_REQUEST_CODE = 200;
 
     private Button playButton;
     private Button photosButton;
@@ -43,16 +57,23 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        context = getApplicationContext();
-        layout = (RelativeLayout) findViewById(R.id.activity_main);
+        mContext = getApplicationContext();
+        mLayout = (RelativeLayout) findViewById(R.id.activity_main);
 
         configureView();
-
 
         formatSlider();
         formatZoomView();
 
+        if (checkCameraPermission()) {
+            configureCamera();
+        } else {
+            requestCameraPermission();
+        }
     }
+
+
+    // View configuration
 
     public void configureView() {
 
@@ -117,13 +138,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (popupWindow == null) {
-                    LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+                    LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
                     View calloutView = layoutInflater.inflate(R.layout.settings_callout, null);
                     popupWindow = new PopupWindow(calloutView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     if(Build.VERSION.SDK_INT>=21){
                         popupWindow.setElevation(5.0f);
                     }
-                    popupWindow.showAtLocation(layout, Gravity.BOTTOM, 0, 120);
+                    popupWindow.showAtLocation(mLayout, Gravity.BOTTOM, 0, 120);
                 } else {
                     popupWindow.dismiss();
                     popupWindow = null;
@@ -170,10 +191,88 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
     public void flicker() {
 
     }
+
+
+
+    // Camera functions
+
+    private void configureCamera() {
+        mCamera = getCameraInstance();
+
+        mCameraPreview = new CameraPreview(this, mCamera);
+        FrameLayout preview = (FrameLayout) findViewById(R.id.cameraPreview);
+        preview.addView(mCameraPreview);
+    }
+
+    public static Camera getCameraInstance(){
+
+        Camera c = null;
+        try {
+            c = Camera.open(0); // attempt to get a Camera instance
+        }
+        catch (Exception e){
+            // Camera is not available (in use or does not exist)
+        }
+        return c; // returns null if mCamera is unavailable
+    }
+
+    private boolean checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            return false;
+        }
+        return true;
+    }
+
+    private void requestCameraPermission() {
+
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.CAMERA},
+                PERMISSION_REQUEST_CODE);
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(), "Permission Granted", Toast.LENGTH_SHORT).show();
+                    configureCamera();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                                != PackageManager.PERMISSION_GRANTED) {
+                            showMessageOKCancel("You need to allow access permissions",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                requestCameraPermission();
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+
+                }
+                break;
+        }
+
+    }
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(MainActivity.this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
+    }
+
 
 }
