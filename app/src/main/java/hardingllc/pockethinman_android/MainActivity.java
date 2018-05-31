@@ -1,31 +1,39 @@
 package hardingllc.pockethinman_android;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
+import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
-import android.widget.ScrollView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.Toast;
-import android.util.Log;
+
+import java.io.FileNotFoundException;
 
 public class MainActivity extends AppCompatActivity {
 
     Boolean isPlaying = false;
 
     private Context context;
+    private RelativeLayout layout;
 
     private Button playButton;
     private Button photosButton;
     private Button settingsButton;
     private Button cameraButton;
     private Button cancelButton;
+
+    private ImageView imageView;
 
     private PopupWindow popupWindow;
 
@@ -36,10 +44,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         context = getApplicationContext();
+        layout = (RelativeLayout) findViewById(R.id.activity_main);
 
         configureView();
-        configureSettingsButtonAction();
-        configurePlayButtonAction();
+
 
         formatSlider();
         formatZoomView();
@@ -53,6 +61,15 @@ public class MainActivity extends AppCompatActivity {
         settingsButton = (Button) findViewById(R.id.settingsButton);
         cameraButton = (Button) findViewById(R.id.cameraButton);
         cancelButton = (Button) findViewById(R.id.cancelButton);
+
+        imageView = (ImageView) findViewById(R.id.imageView);
+
+
+        configurePlayButtonAction();
+        configurePhotosButtonAction();
+        configureSettingsButtonAction();
+        configureCameraButtonAction();
+        configureCancelButtonAction();
     }
 
     public void formatZoomView() {
@@ -61,23 +78,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void formatSlider() {
         SeekBar slider = (SeekBar) findViewById(R.id.seekBar);
-
-    }
-
-
-    public void configureSettingsButtonAction() {
-
-        settingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (popupWindow == null) {
-                    popupWindow = new PopupWindow();
-                } else {
-                    popupWindow = null;
-                }
-            }
-        });
-
     }
 
     public void configurePlayButtonAction() {
@@ -97,7 +97,77 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
 
+    public void configurePhotosButtonAction() {
+
+        photosButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, 0);
+            }
+        });
+    }
+
+    public void configureSettingsButtonAction() {
+
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (popupWindow == null) {
+                    LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+                    View calloutView = layoutInflater.inflate(R.layout.settings_callout, null);
+                    popupWindow = new PopupWindow(calloutView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    if(Build.VERSION.SDK_INT>=21){
+                        popupWindow.setElevation(5.0f);
+                    }
+                    popupWindow.showAtLocation(layout, Gravity.BOTTOM, 0, 120);
+                } else {
+                    popupWindow.dismiss();
+                    popupWindow = null;
+                }
+            }
+        });
+    }
+
+    public void configureCameraButtonAction() {
+
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+    }
+
+    public void configureCancelButtonAction() {
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                imageView.setImageResource(0);
+            }
+        });
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK){
+            Uri targetUri = data.getData();
+            Bitmap bitmap;
+            try {
+                bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(targetUri));
+                imageView.setImageBitmap(bitmap);
+            } catch (FileNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
     }
 
 
