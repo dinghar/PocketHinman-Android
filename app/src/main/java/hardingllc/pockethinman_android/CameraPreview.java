@@ -10,8 +10,6 @@ import android.view.ViewGroup;
 
 import java.io.IOException;
 
-import static android.content.ContentValues.TAG;
-
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 
     SurfaceHolder mHolder;
@@ -56,7 +54,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         try {
             mCamera.stopPreview();
         } catch (Exception e) {
-            Log.d(TAG, "Error: " + e.getMessage());
+            Log.d("1", "Error: " + e.getMessage());
         }
 
         try {
@@ -64,7 +62,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mCamera.startPreview();
 
         } catch (Exception e){
-            Log.d(TAG, "Error starting camera preview: " + e.getMessage());
+            Log.d("1", "Error starting camera preview: " + e.getMessage());
         }
     }
 
@@ -75,7 +73,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mCamera.setDisplayOrientation(90);
             mCamera.startPreview();
         } catch (IOException e) {
-            Log.d(TAG, "Error setting camera preview: " + e.getMessage());
+            Log.d("1", "Error setting camera preview: " + e.getMessage());
         }
     }
 
