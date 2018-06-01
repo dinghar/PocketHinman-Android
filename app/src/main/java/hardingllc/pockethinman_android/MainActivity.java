@@ -35,6 +35,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Size;
+import android.util.SparseIntArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -88,6 +89,13 @@ public class MainActivity extends AppCompatActivity {
     private boolean flashSupported;
     private Handler backgroundHandler;
     private HandlerThread backgroundThread;
+    private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
+    static {
+        ORIENTATIONS.append(Surface.ROTATION_0, 90);
+        ORIENTATIONS.append(Surface.ROTATION_90, 0);
+        ORIENTATIONS.append(Surface.ROTATION_180, 270);
+        ORIENTATIONS.append(Surface.ROTATION_270, 180);
+    }
 
 
     private Button playButton;
@@ -252,7 +260,6 @@ public class MainActivity extends AppCompatActivity {
                 bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(targetUri));
                 imageView.setImageBitmap(bitmap);
             } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -294,7 +301,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             int rotation = getWindowManager().getDefaultDisplay().getRotation();
-            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, Surface.ROTATION_0);
+            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
 
             file = new File(Environment.getExternalStorageDirectory()+"/"+UUID.randomUUID().toString()+".jpg");
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
@@ -302,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onImageAvailable(ImageReader reader) {
                     Image image = null;
                     try {
-                        image = reader.acquireLatestImage();
+                        image = reader.acquireNextImage(); //reader.acquireLatestImage();
                         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
                         byte[] bytes = new byte[buffer.capacity()];
                         buffer.get(bytes);
@@ -337,7 +344,16 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
                     super.onCaptureCompleted(session, request, result);
-                    Toast.makeText(MainActivity.this, "Saved " + file, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this, "Saved " + file, Toast.LENGTH_SHORT).show();
+                    runOnUiThread(new Runnable(){
+                        public void run() {
+                            Log.d("asdf", file.getAbsolutePath());
+                            Intent mediaStoreUpdateIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                            mediaStoreUpdateIntent.setData(Uri.fromFile(file));
+//                            imageView.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()));
+                            imageView.setImageURI(Uri.fromFile(file));
+                        }
+                    });
                     createCameraPreview();
                 }
             };
