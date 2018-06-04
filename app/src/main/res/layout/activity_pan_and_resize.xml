@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PanAndResizeActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:text="Cancel"
+            android:id="@+id/cancelResizePanButton"/>
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:text="Done"
+            android:id="@+id/doneResizePanButton"/>
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>
