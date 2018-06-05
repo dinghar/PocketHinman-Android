@@ -64,6 +64,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
@@ -108,10 +110,11 @@ public class MainActivity extends AppCompatActivity {
     private Button settingsButton;
     private Button cameraButton;
     private Button cancelButton;
-
+    private SeekBar slider;
+    private ZoomableViewGroup zoomableViewGroup;
     private ImageView imageView;
-
     private PopupWindow popupWindow;
+
 
     CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override
@@ -160,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
         cancelButton = (Button) findViewById(R.id.cancelButton);
 
         imageView = (ImageView) findViewById(R.id.imageView);
+        zoomableViewGroup = (ZoomableViewGroup) findViewById(R.id.zoomableViewGroup);
         textureView = (TextureView) findViewById(R.id.textureView);
         assert textureView != null;
         textureView.setSurfaceTextureListener(textureListener);
@@ -196,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void formatSlider() {
-        SeekBar slider = (SeekBar) findViewById(R.id.seekBar);
+        slider = (SeekBar) findViewById(R.id.seekBar);
     }
 
     public void configurePlayButtonAction() {
@@ -209,10 +213,14 @@ public class MainActivity extends AppCompatActivity {
                 if (isPlaying) {
                     isPlaying = false;
                     playButton.setText("Play");
-                    flicker();
+                    imageView.setVisibility(View.VISIBLE);
+                    textureView.setVisibility(View.VISIBLE);
+                    formatImageView();
                 } else {
                     isPlaying = true;
                     playButton.setText("Pause");
+                    imageView.setAlpha((float) 1);
+                    flicker();
                 }
             }
         });
@@ -327,6 +335,30 @@ public class MainActivity extends AppCompatActivity {
 
     public void flicker() {
 
+        runOnUiThread(new Runnable(){
+            public void run() {
+                if (isPlaying) {
+                    final double sliderVal = slider.getProgress();
+                    if (imageView.getVisibility() == View.INVISIBLE) {
+                        imageView.setVisibility(View.VISIBLE);
+                        textureView.setVisibility(View.INVISIBLE);
+                    } else {
+                        imageView.setVisibility(View.INVISIBLE);
+                        textureView.setVisibility(View.VISIBLE);
+                    }
+                    long delay = (long) (Math.pow(1 - sliderVal/500, 20) * 1000);
+                    new Timer().schedule(
+                        new TimerTask() {
+                            @Override
+                            public void run() {
+                                flicker();
+                            }
+                        },
+                        delay
+                    );
+                }
+            }
+        });
     }
 
 
