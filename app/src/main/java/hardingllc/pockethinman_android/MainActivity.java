@@ -34,6 +34,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -98,6 +99,8 @@ public class MainActivity extends AppCompatActivity {
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
+    private int DSI_height;
+    private int DSI_width;
 
 
     private Button playButton;
@@ -443,6 +446,14 @@ public class MainActivity extends AppCompatActivity {
             assert texture != null;
             texture.setDefaultBufferSize(imageDimension.getWidth(), imageDimension.getHeight());
             Surface surface = new Surface(texture);
+
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            DSI_height = displayMetrics.heightPixels;
+            DSI_width = displayMetrics.widthPixels;
+            setAspectRatioTextureView(imageDimension.getHeight(),imageDimension.getWidth());
+
+
             captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             captureRequestBuilder.addTarget(surface);
             cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
@@ -464,11 +475,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void setAspectRatioTextureView(int ResolutionWidth , int ResolutionHeight )
+    {
+        if(ResolutionWidth > ResolutionHeight){
+            int newWidth = DSI_width;
+            int newHeight = ((DSI_width * ResolutionWidth)/ResolutionHeight);
+            updateTextureViewSize(newWidth,newHeight);
+
+        }else {
+            int newWidth = DSI_width;
+            int newHeight = ((DSI_width * ResolutionHeight)/ResolutionWidth);
+            updateTextureViewSize(newWidth,newHeight);
+        }
+
+    }
+
+    private void updateTextureViewSize(final int viewWidth, final int viewHeight) {
+        Log.d("TextureTag", "TextureView Width : " + viewWidth + " TextureView Height : " + viewHeight);
+        runOnUiThread(new Runnable(){
+            public void run() {
+                textureView.setLayoutParams(new FrameLayout.LayoutParams(viewWidth, viewHeight));
+            }
+        });
+    }
+
     private void updatePreview() {
 
         if (cameraDevice == null)
             Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
-        captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+            captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
         try {
             cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, backgroundHandler);
         } catch (CameraAccessException e) {
