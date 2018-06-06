@@ -16,6 +16,7 @@
         android:layout_marginBottom="8dp"
         android:gravity="center_vertical|left"
         android:textSize="18dp"
+        android:paddingLeft="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/alphaStepperMinus"
         />
