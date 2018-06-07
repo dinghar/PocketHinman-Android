@@ -26,7 +26,6 @@ public class ZoomableViewGroup extends ViewGroup {
     private float mLastTouchY;
 
     private float mFocusY;
-
     private float mFocusX;
 
     private float[] mInvalidateWorkingArray = new float[6];
@@ -42,7 +41,7 @@ public class ZoomableViewGroup extends ViewGroup {
     }
 
     public ZoomableViewGroup(Context context, AttributeSet attrs) {
-        super(context);
+        super(context, attrs);
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         mTranslateMatrix.setTranslate(0, 0);
         mScaleMatrix.setScale(1, 1);
@@ -62,7 +61,6 @@ public class ZoomableViewGroup extends ViewGroup {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
@@ -218,5 +216,45 @@ public class ZoomableViewGroup extends ViewGroup {
 
             return true;
         }
+    }
+
+    public float getMPosX() {
+        return mPosX;
+    }
+
+    public float getMPosY() {
+        return mPosY;
+    }
+
+    public float getMScaleFactor() {
+        return mScaleFactor;
+    }
+
+    public float getMFocusX() {
+        return mFocusX;
+    }
+
+    public float getMFocusY() {
+        return mFocusY;
+    }
+
+    public void setMPosX(float newMPosX) {
+        mPosX = newMPosX;
+    }
+
+    public void setMPosY(float newMPosY) {
+        mPosY = newMPosY;
+    }
+
+    public void setMScaleFactor(float newMScaleFactor) {
+        mScaleFactor = newMScaleFactor;
+    }
+
+    public void setMFocusX(float newMFocusX) {
+        mFocusX = newMFocusX;
+    }
+
+    public void setMFocusY(float newMFocusY) {
+        mFocusY = newMFocusY;
     }
 }

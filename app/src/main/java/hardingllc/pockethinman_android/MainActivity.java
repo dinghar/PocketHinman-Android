@@ -30,7 +30,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.Gravity;
@@ -329,8 +328,17 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         if (resultCode == 2) {
-//            float mScaleFactor = data.getExtras().getFloat("mScaleFactor");
-//            zoomableViewGroup.mScaleFactor = mScaleFactor;
+            float mScaleFactor = data.getExtras().getFloat("mScaleFactor");
+            float mFocusX = data.getExtras().getFloat("mFocusX");
+            float mFocusY = data.getExtras().getFloat("mFocusY");
+            float mPosX = data.getExtras().getFloat("mPosX");
+            float mPosY = data.getExtras().getFloat("mPosY");
+            zoomableViewGroup.setMScaleFactor(mScaleFactor);
+            zoomableViewGroup.setMFocusX(mFocusX);
+            zoomableViewGroup.setMFocusY(mFocusY);
+            zoomableViewGroup.setMPosX(mPosX);
+            zoomableViewGroup.setMPosY(mPosY);
+            zoomableViewGroup.invalidate();
         }
     }
 
@@ -439,7 +447,6 @@ public class MainActivity extends AppCompatActivity {
                     super.onCaptureCompleted(session, request, result);
                     runOnUiThread(new Runnable(){
                         public void run() {
-                            Log.d("asdf", file.getAbsolutePath());
                             Intent mediaStoreUpdateIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                             mediaStoreUpdateIntent.setData(Uri.fromFile(file));
                             imageView.setImageURI(Uri.fromFile(file));
@@ -524,7 +531,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateTextureViewSize(final int viewWidth, final int viewHeight) {
-        Log.d("TextureTag", "TextureView Width : " + viewWidth + " TextureView Height : " + viewHeight);
         runOnUiThread(new Runnable(){
             public void run() {
                 textureView.setLayoutParams(new FrameLayout.LayoutParams(viewWidth, viewHeight));

@@ -61,13 +61,13 @@ public class PanAndResizeActivity extends AppCompatActivity {
         donePanResizeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent resultIntent = new Intent();
-//                resultIntent.putExtra("zoomableViewGroup mScaleFactor", resizeZoomableViewGroup.mScaleFactor);
-//                resultIntent.putExtra("zoomableViewGroup mFocusX", resizeZoomableViewGroup.mFocusX);
-//                resultIntent.putExtra("zoomableViewGroup mFocusY", resizeZoomableViewGroup.mFocusY);
-//                resultIntent.putExtra("zoomableViewGroup mPosX", resizeZoomableViewGroup.mPosX);
-//                resultIntent.putExtra("zoomableViewGroup mPosY", resizeZoomableViewGroup.mPosY);
-//                setResult(2, resultIntent);
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("zoomableViewGroup mScaleFactor", resizeZoomableViewGroup.getMScaleFactor());
+                resultIntent.putExtra("zoomableViewGroup mFocusX", resizeZoomableViewGroup.getMFocusX());
+                resultIntent.putExtra("zoomableViewGroup mFocusY", resizeZoomableViewGroup.getMFocusY());
+                resultIntent.putExtra("zoomableViewGroup mPosX", resizeZoomableViewGroup.getMPosX());
+                resultIntent.putExtra("zoomableViewGroup mPosY", resizeZoomableViewGroup.getMPosY());
+                setResult(2, resultIntent);
                 finish();
             }
         });
