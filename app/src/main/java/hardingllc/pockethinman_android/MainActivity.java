@@ -34,6 +34,7 @@ import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -228,6 +229,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, 0);
             }
         });
+
+        photosButton.setBackgroundResource(R.drawable.photos_background_image);
     }
 
     public void configureSettingsButtonAction() {
@@ -290,6 +293,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        settingsButton.setBackgroundResource(R.drawable.settings_background_image);
     }
 
     public void configureCameraButtonAction() {
@@ -300,6 +305,8 @@ public class MainActivity extends AppCompatActivity {
                 takePicture();
             }
         });
+
+        cameraButton.setBackgroundResource(R.drawable.camera_background_image);
     }
 
     public void configureCancelButtonAction() {
@@ -310,6 +317,8 @@ public class MainActivity extends AppCompatActivity {
                 imageView.setImageResource(0);
             }
         });
+
+        cancelButton.setBackgroundResource(R.drawable.x_background_image);
     }
 
 
