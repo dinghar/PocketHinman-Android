@@ -283,6 +283,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                     });
+                    panResizeButton.setEnabled(false);
                     if (Build.VERSION.SDK_INT>=21) {
                         popupWindow.setElevation(5.0f);
                     }
