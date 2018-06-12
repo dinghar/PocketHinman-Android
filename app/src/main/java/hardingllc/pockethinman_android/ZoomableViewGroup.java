@@ -1,3 +1,9 @@
+/*
+
+    This class taken from https://stackoverflow.com/questions/12479859/view-with-horizontal-and-vertical-pan-drag-and-pinch-zoom/12497670#12497670
+
+ */
+
 package hardingllc.pockethinman_android;
 
 import android.content.Context;
@@ -5,7 +11,11 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.view.*;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 
 public class ZoomableViewGroup extends ViewGroup {
 
