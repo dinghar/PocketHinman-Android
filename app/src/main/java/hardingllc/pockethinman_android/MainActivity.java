@@ -33,6 +33,8 @@ import android.util.DisplayMetrics;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.Gravity;
+import android.view.KeyCharacterMap;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -287,7 +289,11 @@ public class MainActivity extends AppCompatActivity {
                     if (Build.VERSION.SDK_INT>=21) {
                         popupWindow.setElevation(5.0f);
                     }
-                    popupWindow.showAtLocation(mLayout, Gravity.BOTTOM, 0, 120);
+                    int[] positions = new int[2];
+                    settingsButton.getLocationOnScreen(positions);
+                    int height = mLayout.getHeight();
+                    int yPosition = height - positions[1] + 180;
+                    popupWindow.showAtLocation(mLayout, Gravity.CENTER, 0, yPosition);
                 } else {
                     popupWindow.dismiss();
                     popupWindow = null;
