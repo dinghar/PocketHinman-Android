@@ -598,7 +598,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-
+            ViewGroup.LayoutParams params = imageView.getLayoutParams();
+            params.height = height;
+            params.width = width;
+            imageView.setLayoutParams(params);
         }
 
         @Override
